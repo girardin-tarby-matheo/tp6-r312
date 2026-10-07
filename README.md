@@ -1,8 +1,8 @@
-- URL site WEB :
+- URL site WEB : https://r312-tp6.netlify.app
 - URL Notebook Observable :
-- Nom :
-- Prénom :
-- Nom binome :
+- Nom : Girardin Tarby
+- Prénom : Mathéo
+- Nom binome : 
 - Prénom binome :
 
 # Remarques :
