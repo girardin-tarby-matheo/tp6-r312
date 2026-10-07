@@ -5,24 +5,92 @@ import Layout from "../../layouts/Layout.astro";
 const years = [...new Set(cars.map((car) => car.year))].sort(
     (firstYear, secondYear) => firstYear - secondYear,
 );
+const cylinders = [...new Set(cars.map((car) => car.cylinders))].sort(
+    (first, second) => first - second,
+);
+const powerLevels = [0, 100, 150, 200, 250];
 ---
 
-<Layout title="Voitures par année">
+<Layout title="Voitures avec plusieurs filtres">
     <main class="ml-40 mt-10">
-        <h1>Voitures par année</h1>
-        <ul>
-            {
-                years.map((year) => (
-                    <li>
-                        <a
-                            href={`/cars/year/${year}`}
-                            class="text-blue-600 hover:underline"
-                        >
-                            Année : {year}
-                        </a>
-                    </li>
-                ))
-            }
-        </ul>
+        <h1>Voitures avec plusieurs filtres</h1>
+        <div class="mb-5 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white/70 p-4 md:grid-cols-3 md:gap-4">
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="year">
+                Année
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" id="year">
+                    <option value="">Toutes les années</option>
+                    {years.map((year) => <option value={year}>{year}</option>)}
+                </select>
+            </label>
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="cylinders">
+                Cylindres
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" id="cylinders">
+                    <option value="">Tous les moteurs</option>
+                    {cylinders.map((count) => <option value={count}>{count} cylindres</option>)}
+                </select>
+            </label>
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="power">
+                Puissance minimale
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" id="power">
+                    <option value="">Toutes les puissances</option>
+                    {powerLevels.map((power) => <option value={power}>{power} hp et plus</option>)}
+                </select>
+            </label>
+        </div>
+        <p id="cars-count" class="mb-4 text-slate-600"></p>
+        <div id="cars-plot" class="plot-shell" aria-live="polite"></div>
     </main>
 </Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import cars from "../../assets/cars.json";
+
+    const yearSelect = document.querySelector<HTMLSelectElement>("#year");
+    const cylindersSelect =
+        document.querySelector<HTMLSelectElement>("#cylinders");
+    const powerSelect = document.querySelector<HTMLSelectElement>("#power");
+    const container = document.querySelector<HTMLDivElement>("#cars-plot");
+    const count = document.querySelector<HTMLParagraphElement>("#cars-count");
+
+    function renderPlot() {
+        if (!container) return;
+        const year = yearSelect?.value ?? "";
+        const cylinders = cylindersSelect?.value ?? "";
+        const power = powerSelect?.value ?? "";
+        const filteredCars = cars.filter(
+            (car) =>
+                (!year || String(car.year) === year) &&
+                (!cylinders || String(car.cylinders) === cylinders) &&
+                (!power || car["power (hp)"] >= Number(power)),
+        );
+
+        count?.replaceChildren(
+            document.createTextNode(`${filteredCars.length} voiture(s) trouvée(s)`),
+        );
+        const plot = Plot.plot({
+            title: "Relation entre la puissance et le poids des voitures",
+            subtitle: "Les points sont colorés selon le nombre de cylindres",
+            grid: true,
+            color: { legend: true },
+            x: { label: "Poids (lb)" },
+            y: { label: "Puissance (hp)" },
+            marks: [
+                Plot.dot(filteredCars, {
+                    x: "weight (lb)",
+                    y: "power (hp)",
+                    stroke: "cylinders",
+                    r: 4,
+                    fillOpacity: 0.7,
+                    title: "name",
+                }),
+            ],
+        });
+        container.replaceChildren(plot);
+    }
+
+    [yearSelect, cylindersSelect, powerSelect].forEach((select) =>
+        select?.addEventListener("change", renderPlot),
+    );
+    renderPlot();
+</script>
