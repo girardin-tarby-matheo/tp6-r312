@@ -1,0 +1,32 @@
+---
+import rawPenguins from "../../../data/penguins.json";
+import Layout from "../../../layouts/Layout.astro";
+
+const sexList = [
+    ...new Set(
+        rawPenguins
+            .map((penguin) => penguin.sex)
+            .filter((sex): sex is string => sex != null),
+    ),
+];
+---
+
+<Layout title="Sexes des manchots">
+    <main class="ml-40 mt-10">
+        <h1>Sexes des manchots</h1>
+        <ul>
+            {
+                sexList.map((sex) => (
+                    <li>
+                        <a
+                            href={`/penguins/sex/${encodeURIComponent(sex)}`}
+                            class="text-blue-600 hover:underline"
+                        >
+                            {sex}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </main>
+</Layout>

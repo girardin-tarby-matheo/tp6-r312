@@ -1,40 +1,41 @@
 ---
+import pokemon from "../data/pokemon.json";
 import Layout from "../layouts/Layout.astro";
+
+const pokemonTypes = [...new Set(pokemon.map((item) => item.type1))].sort();
+const generations = [...new Set(pokemon.map((item) => item.generation))].sort(
+    (first, second) => first - second,
+);
 ---
 
 <Layout title="Pokémon avec filtre - Observable Plot">
     <main class="ml-40 mt-10 max-w-5xl pr-8 pb-16">
         <h1>Pokémon avec filtre</h1>
-        <div class="filters">
-            <label for="type1">Type principal</label>
-            <select name="type1" id="type1">
-                <option value="">Tous les types</option>
-                <option value="Plante">Plante</option>
-                <option value="Feu">Feu</option>
-                <option value="Eau">Eau</option>
-                <option value="Électrik">Électrik</option>
-                <option value="Normal">Normal</option>
-                <option value="Psy">Psy</option>
-                <option value="Combat">Combat</option>
-                <option value="Roche">Roche</option>
-                <option value="Spectre">Spectre</option>
-                <option value="Glace">Glace</option>
-                <option value="Dragon">Dragon</option>
-            </select>
-            <label for="generation">Génération</label>
-            <select name="generation" id="generation">
-                <option value="">Toutes les générations</option>
-                <option value="1">Génération 1</option>
-                <option value="2">Génération 2</option>
-                <option value="3">Génération 3</option>
-                <option value="4">Génération 4</option>
-            </select>
-            <label for="legendary">Statut</label>
-            <select name="legendary" id="legendary">
-                <option value="">Tous</option>
-                <option value="true">Légendaires</option>
-                <option value="false">Non légendaires</option>
-            </select>
+        <div class="mb-5 grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white/70 p-4 md:grid-cols-3 md:gap-4">
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="type1">
+                Type principal
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" name="type1" id="type1">
+                    <option value="">Tous les types</option>
+                    {pokemonTypes.map((type) => <option value={type}>{type}</option>)}
+                </select>
+            </label>
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="generation">
+                Génération
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" name="generation" id="generation">
+                    <option value="">Toutes les générations</option>
+                    {generations.map((generation) => (
+                        <option value={generation}>Génération {generation}</option>
+                    ))}
+                </select>
+            </label>
+            <label class="grid gap-1.5 text-sm font-bold text-slate-600" for="legendary">
+                Statut
+                <select class="min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal text-slate-900 focus:outline-3 focus:outline-amber-600" name="legendary" id="legendary">
+                    <option value="">Tous</option>
+                    <option value="true">Légendaires</option>
+                    <option value="false">Non légendaires</option>
+                </select>
+            </label>
         </div>
         <div id="pokemon-plot" class="plot-shell" aria-live="polite"></div>
         <p class="mt-8"><a href="/">← Retour au sommaire</a></p>

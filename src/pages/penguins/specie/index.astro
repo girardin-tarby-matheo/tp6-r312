@@ -1,0 +1,26 @@
+---
+import rawPenguins from "../../../data/penguins.json";
+import Layout from "../../../layouts/Layout.astro";
+
+const speciesList = [...new Set(rawPenguins.map((penguin) => penguin.species))];
+---
+
+<Layout title="Espèces de manchots">
+    <main class="ml-40 mt-10">
+        <h1>Espèces de manchots</h1>
+        <ul>
+            {
+                speciesList.map((species) => (
+                    <li>
+                        <a
+                            href={`/penguins/specie/${encodeURIComponent(species)}`}
+                            class="text-blue-600 hover:underline"
+                        >
+                            {species}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </main>
+</Layout>

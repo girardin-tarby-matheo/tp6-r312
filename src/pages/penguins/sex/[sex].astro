@@ -1,0 +1,50 @@
+---
+import * as Plot from "@observablehq/plot";
+import rawPenguins from "../../../data/penguins.json";
+import Layout from "../../../layouts/Layout.astro";
+import PlotFigure from "../../../components/PlotFigure.astro";
+
+export function getStaticPaths() {
+    const sexList = [
+        ...new Set(
+            rawPenguins
+                .map((penguin) => penguin.sex)
+                .filter((sex): sex is string => sex != null),
+        ),
+    ];
+
+    return sexList.map((sex) => ({
+        params: { sex },
+    }));
+}
+
+const { sex } = Astro.params;
+const filteredPenguins = rawPenguins.filter(
+    (penguin) =>
+        penguin.sex === sex &&
+        penguin.culmen_length_mm != null &&
+        penguin.culmen_depth_mm != null,
+);
+
+const plotOptions = {
+    title: `Manchots ${sex.toLowerCase()} — Morphologie du bec`,
+    subtitle: "Relation entre la longueur et la profondeur du bec (en mm)",
+    grid: true,
+    color: { legend: true },
+    marks: [
+        Plot.dot(filteredPenguins, {
+            x: "culmen_length_mm",
+            y: "culmen_depth_mm",
+            stroke: "species",
+        }),
+    ],
+};
+---
+
+<Layout title={`Sexe ${sex} — Manchots de Palmer`}>
+    <main class="ml-40 mt-10">
+        <h1>Manchots {sex.toLowerCase()}</h1>
+        <p>{filteredPenguins.length} individu(s) trouvé(s).</p>
+        <PlotFigure options={plotOptions} />
+    </main>
+</Layout>

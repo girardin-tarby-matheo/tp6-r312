@@ -1,126 +1,60 @@
 ---
 const currentPath = Astro.url.pathname;
 
-const tabs = [
-    { id: "home", label: "Accueil", href: "/" },
+const navigationGroups = [
     {
-        id: "penguin-filtre",
-        label: "Penguin avec filtre",
-        href: "/penguin-filtre/",
+        label: "Accueil",
+        links: [{ id: "home", label: "Accueil", href: "/" }],
     },
     {
-        id: "penguin-filtres",
-        label: "Penguin avec plusieurs filtres",
-        href: "/penguin-filtres/",
+        label: "Manchots",
+        links: [
+            { id: "penguin-filtre", label: "Penguin avec filtre", href: "/penguin-filtre/" },
+            { id: "penguin-filtres", label: "Penguin avec plusieurs filtres", href: "/penguin-filtres/" },
+            { id: "graphique1", label: "Graphique 1", href: "/graphique1/" },
+            { id: "graphique2", label: "Graphique 2", href: "/graphique2/" },
+            { id: "graphique3", label: "Graphique 3", href: "/graphique3/" },
+            { id: "graphique4", label: "Graphique 4", href: "/graphique4/" },
+            { id: "species", label: "Tri par espèces", href: "/species/" },
+            { id: "species-tabs", label: "Espèces par onglets", href: "/species-tabs/" },
+            { id: "species-index", label: "Espèces (routes statiques)", href: "/penguins/specie/" },
+            { id: "island-index", label: "Îles", href: "/penguins/island/" },
+            { id: "sex-index", label: "Sexes", href: "/penguins/sex/" },
+            { id: "adelie", label: "Adélie", href: "/species/Adelie/" },
+            { id: "gentoo", label: "Gentoo", href: "/species/Gentoo/" },
+            { id: "chinstrap", label: "Chinstrap", href: "/species/Chinstrap/" },
+        ],
     },
-    { id: "graphique1", label: "Graphique 1", href: "/graphique1/" },
-    { id: "graphique2", label: "Graphique 2", href: "/graphique2/" },
-    { id: "graphique3", label: "Graphique 3", href: "/graphique3/" },
-    { id: "graphique4", label: "Graphique 4", href: "/graphique4/" },
-    { id: "species", label: "Trie par Espèces", href: "/species/" },
     {
-        id: "species-tabs",
-        label: "Espèces par onglets",
-        href: "/species-tabs/",
+        label: "Autres datasets",
+        links: [
+            { id: "pokemon", label: "Pokémon", href: "/pokemon/" },
+            { id: "pokemon-filtre", label: "Pokémon avec filtre", href: "/pokemon-filtre/" },
+            { id: "planets", label: "Planètes", href: "/planets/" },
+            { id: "planets-filtre", label: "Planètes avec filtre", href: "/planets-filtre/" },
+            { id: "cars", label: "Voitures", href: "/cars/" },
+        ],
     },
-    { id: "adelie", label: "Adélie", href: "/species/Adelie/" },
-    { id: "gentoo", label: "Gentoo", href: "/species/Gentoo/" },
-    { id: "chinstrap", label: "Chinstrap", href: "/species/Chinstrap/" },
-    { id: "pokemon", label: "Pokémon", href: "/pokemon/" },
-    {
-        id: "pokemon-filtre",
-        label: "Pokémon avec filtre",
-        href: "/pokemon-filtre/",
-    },
-    { id: "planets", label: "Planètes", href: "/planets/" },
-    {
-        id: "planets-filtre",
-        label: "Planètes avec filtre",
-        href: "/planets-filtre/",
-    },
-    { id: "cars", label: "Voitures", href: "/cars/" },
 ];
 ---
 
-<nav class="menu" aria-label="Navigation principale">
-    <div class="menu-inner">
-        <label for="page-navigation">Aller à une page</label>
-        <select id="page-navigation" aria-label="Choisir une page">
-            {
-                tabs.map((tab) => (
-                    <option
-                        value={tab.href}
-                        selected={tab.href === currentPath}
-                    >
-                        {tab.label}
-                    </option>
-                ))
-            }
+<nav class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur-xl" aria-label="Navigation principale">
+    <div class="mx-auto flex min-h-[4.5rem] w-[min(100%-2rem,75rem)] items-center justify-end gap-4 max-[42rem]:flex-wrap max-[42rem]:gap-2 max-[42rem]:py-3">
+        <label class="text-sm font-bold text-slate-500" for="page-navigation">Aller à une page</label>
+        <select class="min-w-52 cursor-pointer rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 focus:outline-3 focus:outline-amber-600 max-[42rem]:min-w-0 max-[42rem]:flex-1" id="page-navigation" aria-label="Choisir une page">
+            {navigationGroups.map((group) => (
+                <optgroup label={group.label}>
+                    {group.links.map((tab) => (
+                        <option value={tab.href} selected={tab.href === currentPath}>{tab.label}</option>
+                    ))}
+                </optgroup>
+            ))}
         </select>
     </div>
 </nav>
 
 <script>
-    document
-        .querySelector("#page-navigation")
-        ?.addEventListener("change", (event) => {
-            const value = (event.target as HTMLSelectElement).value;
-            window.location.pathname = value;
-        });
+    document.querySelector("#page-navigation")?.addEventListener("change", (event) => {
+        window.location.pathname = (event.target as HTMLSelectElement).value;
+    });
 </script>
-
-<style>
-    .menu {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        border-bottom: 1px solid var(--color-border);
-        background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-        backdrop-filter: blur(0.75rem);
-    }
-
-    .menu-inner {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        justify-content: flex-end;
-        width: min(100% - 2rem, 75rem);
-        min-height: 4.5rem;
-        margin-inline: auto;
-    }
-
-    .menu label {
-        color: var(--color-muted);
-        font-size: 0.875rem;
-        font-weight: bold;
-    }
-
-    .menu select {
-        min-width: 13rem;
-        border: 1px solid var(--color-border-strong);
-        border-radius: 0.5rem;
-        background: var(--color-surface);
-        padding: 0.6rem 2rem 0.6rem 0.75rem;
-        color: var(--color-ink);
-        font: inherit;
-        cursor: pointer;
-    }
-
-    .menu select:focus-visible {
-        outline: 3px solid var(--color-focus);
-        outline-offset: 2px;
-    }
-
-    @media (max-width: 42rem) {
-        .menu-inner {
-            flex-wrap: wrap;
-            gap: 0.5rem 0.75rem;
-            padding-block: 0.75rem;
-        }
-
-        .menu select {
-            flex: 1;
-            min-width: 0;
-        }
-    }
-</style>

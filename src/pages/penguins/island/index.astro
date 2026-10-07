@@ -1,0 +1,32 @@
+---
+import rawPenguins from "../../../data/penguins.json";
+import Layout from "../../../layouts/Layout.astro";
+
+const islandList = [
+    ...new Set(
+        rawPenguins
+            .map((penguin) => penguin.island)
+            .filter((island): island is string => island != null),
+    ),
+];
+---
+
+<Layout title="Îles des manchots">
+    <main class="ml-40 mt-10">
+        <h1>Îles des manchots</h1>
+        <ul>
+            {
+                islandList.map((island) => (
+                    <li>
+                        <a
+                            href={`/penguins/island/${encodeURIComponent(island)}`}
+                            class="text-blue-600 hover:underline"
+                        >
+                            {island}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </main>
+</Layout>
