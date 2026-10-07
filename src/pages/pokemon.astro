@@ -1,0 +1,106 @@
+---
+import * as Plot from "@observablehq/plot";
+import Layout from "../layouts/Layout.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import pokemonData from "../data/pokemon.json";
+
+const plotAttackSpeed = {
+    title: "Attaque vs Vitesse des Pokémon",
+    subtitle: "Taille du point = PV, Couleur = Type principal",
+    grid: true,
+    inset: 10,
+    color: { legend: true },
+    marks: [
+        Plot.dot(pokemonData, {
+            x: "speed",
+            y: "attack",
+            stroke: "type1",
+            r: (d) => Math.sqrt(d.hp) * 0.8,
+            title: (d) => `${d.name} (${d.type1})\nAttaque: ${d.attack}\nVitesse: ${d.speed}\nPV: ${d.hp}`,
+        }),
+        Plot.text(pokemonData, {
+            x: "speed",
+            y: "attack",
+            text: "name",
+            dy: -10,
+            fontSize: 9,
+            fill: "#4b5563",
+        }),
+    ],
+};
+
+const plotTypeCount = {
+    title: "Nombre de Pokémon par Type principal",
+    marginLeft: 80,
+    x: { grid: true },
+    color: { legend: false },
+    marks: [
+        Plot.barX(
+            pokemonData,
+            Plot.groupY(
+                { x: "count" },
+                { y: "type1", fill: "type1", sort: { y: "-x" } }
+            )
+        ),
+        Plot.ruleX([0]),
+    ],
+};
+
+const plotDefenseLegendary = {
+    title: "Distribution de la Défense : Légendaires vs Non-Légendaires",
+    marginLeft: 120,
+    grid: true,
+    marks: [
+        Plot.boxX(pokemonData, {
+            x: "defense",
+            y: (d) => (d.legendary ? "Légendaire" : "Standard"),
+            fill: (d) => (d.legendary ? "#fbbf24" : "#60a5fa"),
+        }),
+    ],
+};
+---
+
+<Layout title="Données Pokémon — Statistiques et Visualisation">
+    <main class="ml-40 mt-10 max-w-5xl pr-8 pb-16">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Base de données Pokémon
+            </h1>
+            <p class="text-gray-600">
+                Exploration et visualisation des caractéristiques de combat de
+                {pokemonData.length} Pokémon via Observable Plot.
+            </p>
+        </header>
+
+        
+
+        <section class="space-y-8 mb-12">
+            <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                    1. Relation Attaque / Vitesse
+                </h2>
+                <PlotFigure options={plotAttackSpeed} />
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        2. Répartition par Type
+                    </h2>
+                    <PlotFigure options={plotTypeCount} />
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        3. Défense selon le statut
+                    </h2>
+                    <PlotFigure options={plotDefenseLegendary} />
+                </div>
+            </div>
+        </section>
+
+        <p class="mt-8">
+            <a href="/" class="text-blue-600 hover:underline">← Retour à l'accueil</a>
+        </p>
+    </main>
+</Layout>
+

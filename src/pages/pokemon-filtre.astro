@@ -1,0 +1,89 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Pokémon avec filtre - Observable Plot">
+    <main class="ml-40 mt-10 max-w-5xl pr-8 pb-16">
+        <h1>Pokémon avec filtre</h1>
+        <div class="filters">
+            <label for="type1">Type principal</label>
+            <select name="type1" id="type1">
+                <option value="">Tous les types</option>
+                <option value="Plante">Plante</option>
+                <option value="Feu">Feu</option>
+                <option value="Eau">Eau</option>
+                <option value="Électrik">Électrik</option>
+                <option value="Normal">Normal</option>
+                <option value="Psy">Psy</option>
+                <option value="Combat">Combat</option>
+                <option value="Roche">Roche</option>
+                <option value="Spectre">Spectre</option>
+                <option value="Glace">Glace</option>
+                <option value="Dragon">Dragon</option>
+            </select>
+            <label for="generation">Génération</label>
+            <select name="generation" id="generation">
+                <option value="">Toutes les générations</option>
+                <option value="1">Génération 1</option>
+                <option value="2">Génération 2</option>
+                <option value="3">Génération 3</option>
+                <option value="4">Génération 4</option>
+            </select>
+            <label for="legendary">Statut</label>
+            <select name="legendary" id="legendary">
+                <option value="">Tous</option>
+                <option value="true">Légendaires</option>
+                <option value="false">Non légendaires</option>
+            </select>
+        </div>
+        <div id="pokemon-plot" class="plot-shell" aria-live="polite"></div>
+        <p class="mt-8"><a href="/">← Retour au sommaire</a></p>
+    </main>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import pokemon from "../data/pokemon.json";
+
+    const typeSelect = document.querySelector<HTMLSelectElement>("#type1");
+    const generationSelect =
+        document.querySelector<HTMLSelectElement>("#generation");
+    const legendarySelect =
+        document.querySelector<HTMLSelectElement>("#legendary");
+    const container = document.querySelector<HTMLDivElement>("#pokemon-plot");
+
+    function renderPlot() {
+        if (!container) return;
+        const type = typeSelect?.value ?? "";
+        const generation = generationSelect?.value ?? "";
+        const legendary = legendarySelect?.value ?? "";
+        const filteredPokemon = pokemon.filter(
+            (item) =>
+                (!type || item.type1 === type) &&
+                (!generation || String(item.generation) === generation) &&
+                (!legendary || String(item.legendary) === legendary),
+        );
+        const plot = Plot.plot({
+            title: "Attaque et vitesse des Pokémon filtrés",
+            subtitle: "Taille du point = PV, couleur = type principal",
+            grid: true,
+            inset: 10,
+            color: { legend: true },
+            marks: [
+                Plot.dot(filteredPokemon, {
+                    x: "speed",
+                    y: "attack",
+                    stroke: "type1",
+                    r: (item) => Math.sqrt(item.hp) * 0.8,
+                    title: "name",
+                }),
+            ],
+        });
+        container.replaceChildren(plot);
+    }
+
+    [typeSelect, generationSelect, legendarySelect].forEach((select) =>
+        select?.addEventListener("change", renderPlot),
+    );
+    renderPlot();
+</script>

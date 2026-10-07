@@ -1,0 +1,41 @@
+---
+export const prerender = false;
+
+import * as Plot from "@observablehq/plot";
+import cars from "../../../assets/cars.json";
+import PlotFigure from "../../../components/PlotFigure.astro";
+import Layout from "../../../layouts/Layout.astro";
+
+const { year } = Astro.params;
+const filteredCars = cars.filter((car) => car.year.toString() === year);
+
+const plotOptions = {
+    grid: true,
+    marks: [
+        Plot.dot(filteredCars, {
+            x: "weight (lb)",
+            y: "power (hp)",
+            fill: "steelblue",
+            r: 4,
+            fillOpacity: 0.7,
+        }),
+    ],
+    x: {
+        label: "Poids (lb)",
+    },
+    y: {
+        label: "Puissance (hp)",
+    },
+    title: `Relation Puissance vs Poids - Voitures ${year}`,
+};
+---
+
+<Layout title={`Voitures de l'année ${year}`}>
+    <main class="ml-40 mt-10">
+        <h1>Voitures de l'année {year}</h1>
+        <p>
+            {filteredCars.length} voiture(s) trouvée(s) pour l'année {year}
+        </p>
+        <PlotFigure options={plotOptions} />
+    </main>
+</Layout>

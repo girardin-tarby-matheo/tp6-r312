@@ -1,0 +1,71 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Planètes avec filtre - Observable Plot">
+    <main class="ml-40 mt-10 max-w-5xl pr-8 pb-16">
+        <h1>Planètes avec filtre</h1>
+        <div class="filters">
+            <label for="type">Type</label>
+            <select name="type" id="type">
+                <option value="">Tous les types</option>
+                <option value="Tellurique">Tellurique</option>
+                <option value="Naine">Naine</option>
+                <option value="Géante gazeuse">Géante gazeuse</option>
+                <option value="Géante de glace">Géante de glace</option>
+            </select>
+            <label for="rings">Anneaux</label>
+            <select name="rings" id="rings">
+                <option value="">Toutes</option>
+                <option value="true">Avec anneaux</option>
+                <option value="false">Sans anneaux</option>
+            </select>
+        </div>
+        <div id="planet-plot" class="plot-shell" aria-live="polite"></div>
+        <p class="mt-8"><a href="/">← Retour au sommaire</a></p>
+    </main>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import planets from "../data/planets.json";
+
+    const typeSelect = document.querySelector<HTMLSelectElement>("#type");
+    const ringsSelect = document.querySelector<HTMLSelectElement>("#rings");
+    const container = document.querySelector<HTMLDivElement>("#planet-plot");
+
+    function renderPlot() {
+        if (!container) return;
+        const type = typeSelect?.value ?? "";
+        const rings = ringsSelect?.value ?? "";
+        const filteredPlanets = planets.filter(
+            (planet) =>
+                (!type || planet.type === type) &&
+                (!rings || String(planet.has_rings) === rings),
+        );
+        const plot = Plot.plot({
+            title: "Distance au Soleil et diamètre des planètes",
+            subtitle:
+                "Les données sont filtrées par type et présence d'anneaux",
+            grid: true,
+            inset: 15,
+            x: { type: "log", label: "Distance au Soleil (millions km) →" },
+            y: { label: "Diamètre (km) ↑" },
+            color: { legend: true },
+            marks: [
+                Plot.dot(filteredPlanets, {
+                    x: "distance_sun_mkm",
+                    y: "diameter_km",
+                    stroke: "type",
+                    r: 6,
+                    title: "name",
+                }),
+            ],
+        });
+        container.replaceChildren(plot);
+    }
+
+    typeSelect?.addEventListener("change", renderPlot);
+    ringsSelect?.addEventListener("change", renderPlot);
+    renderPlot();
+</script>

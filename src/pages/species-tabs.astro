@@ -1,0 +1,65 @@
+---
+import {
+    Tabs,
+    TabsList,
+    TabsPanel,
+    TabsTab,
+} from "accessible-astro-components";
+import GraphicSpecies from "../components/GraphicSpecies.astro";
+import rawPenguins from "../data/penguins.json";
+import Layout from "../layouts/Layout.astro";
+
+const speciesList = [...new Set(rawPenguins.map((penguin) => penguin.species))];
+---
+
+<Layout title="Espèces par onglets — Manchots de Palmer">
+    <main class="ml-40 mt-10">
+        <h1>Espèces de manchots par onglets</h1>
+
+        <Tabs class="max-w-4xl!">
+            <TabsList class="flex! flex-wrap! gap-2!">
+                {
+                    speciesList.map((species, index) => {
+                        const tabId = `tab-${species.toLowerCase()}`;
+                        const panelId = `panel-${species.toLowerCase()}`;
+
+                        return (
+                            <TabsTab
+                                id={tabId}
+                                controls={panelId}
+                                selected={index === 0}
+                                class="flex-none! rounded-md! border-0! px-4! py-3! aria-selected:bg-slate-900! aria-selected:text-white!"
+                            >
+                                {species}
+                            </TabsTab>
+                        );
+                    })
+                }
+            </TabsList>
+
+            {
+                speciesList.map((species, index) => {
+                    const tabId = `tab-${species.toLowerCase()}`;
+                    const panelId = `panel-${species.toLowerCase()}`;
+
+                    return (
+                        <TabsPanel
+                            id={panelId}
+                            labelledby={tabId}
+                            selected={index === 0}
+                            class="items-stretch! rounded-md! border-slate-300! p-6!"
+                        >
+                            <GraphicSpecies species={species} />
+                        </TabsPanel>
+                    );
+                })
+            }
+        </Tabs>
+
+        <p class="mt-8">
+            <a href="/" class="text-blue-600 hover:underline"
+                >← Retour à l'accueil</a
+            >
+        </p>
+    </main>
+</Layout>

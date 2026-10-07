@@ -1,0 +1,34 @@
+---
+import * as Plot from "@observablehq/plot";
+import Layout from "../layouts/Layout.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import rawPenguins from "../data/penguins.json";
+
+const penguins = rawPenguins.filter(
+    (d) => d.culmen_length_mm && d.culmen_depth_mm,
+);
+const options = {
+    title: "Morphologie du bec des manchots de Palmer",
+    subtitle: "Relation entre la longueur et la profondeur du bec (en mm)",
+    grid: true,
+    color: { legend: true },
+    marks: [
+        Plot.dot(penguins, {
+            x: "culmen_length_mm",
+            y: "culmen_depth_mm",
+            stroke: "species",
+        }),
+    ],
+};
+---
+
+<Layout title="Graphique 1 - Manchots de Palmer">
+    <main class="ml-40 mt-10">
+        <PlotFigure options={options} />
+        <p class="mt-8">
+            <a href="/" class="text-blue-600 hover:underline"
+                >← Retour à l'accueil</a
+            >
+        </p>
+    </main>
+</Layout>

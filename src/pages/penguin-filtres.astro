@@ -1,0 +1,75 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Penguin avec plusieurs filtres - Observable Plot">
+    <main class="ml-40 mt-10">
+        <h1>Penguin avec plusieurs filtres</h1>
+        <div class="filters">
+            <label for="species">Espèce</label>
+            <select name="species" id="species">
+                <option value="">All species</option>
+                <option value="Adelie">Adelie</option>
+                <option value="Chinstrap">Chinstrap</option>
+                <option value="Gentoo">Gentoo</option>
+            </select>
+            <label for="island">Île</label>
+            <select name="island" id="island">
+                <option value="">All islands</option>
+                <option value="Biscoe">Biscoe</option>
+                <option value="Dream">Dream</option>
+                <option value="Torgersen">Torgersen</option>
+            </select>
+            <label for="sex">Sexe</label>
+            <select name="sex" id="sex">
+                <option value="">All sexes</option>
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+            </select>
+        </div>
+        <div id="plot" class="plot-shell" aria-live="polite"></div>
+        <p class="mt-8"><a href="/">← Retour au sommaire</a></p>
+    </main>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import penguins from "../assets/penguins.json";
+
+    const selectSpecies = document.querySelector<HTMLSelectElement>("#species");
+    const selectIsland = document.querySelector<HTMLSelectElement>("#island");
+    const selectSex = document.querySelector<HTMLSelectElement>("#sex");
+
+    function renderPlot() {
+        const species = selectSpecies?.value ?? "";
+        const island = selectIsland?.value ?? "";
+        const sex = selectSex?.value ?? "";
+        const plotContainer = document.querySelector<HTMLDivElement>("#plot");
+        if (!plotContainer) return;
+        const filteredPenguins = penguins.filter(
+            (penguin) =>
+                (!species || penguin.species === species) &&
+                (!island || penguin.island === island) &&
+                (!sex || penguin.sex === sex),
+        );
+        plotContainer.replaceChildren();
+        const plot = Plot.plot({
+            title: "Morphologie du bec des manchots filtrés",
+            grid: true,
+            color: { legend: true },
+            marks: [
+                Plot.dot(filteredPenguins, {
+                    x: "culmen_length_mm",
+                    y: "culmen_depth_mm",
+                    stroke: "species",
+                }),
+            ],
+        });
+        plotContainer.append(plot);
+    }
+
+    [selectSpecies, selectIsland, selectSex].forEach((select) =>
+        select?.addEventListener("change", renderPlot),
+    );
+    renderPlot();
+</script>

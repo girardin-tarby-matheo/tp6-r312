@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Mercure",
+    "type": "Tellurique",
+    "diameter_km": 4879,
+    "mass_10_24kg": 0.33,
+    "distance_sun_mkm": 57.9,
+    "orbital_period_days": 88,
+    "surface_temp_c": 167,
+    "moons": 0,
+    "has_rings": false
+  },
+  {
+    "name": "Vénus",
+    "type": "Tellurique",
+    "diameter_km": 12104,
+    "mass_10_24kg": 4.87,
+    "distance_sun_mkm": 108.2,
+    "orbital_period_days": 224.7,
+    "surface_temp_c": 464,
+    "moons": 0,
+    "has_rings": false
+  },
+  {
+    "name": "Terre",
+    "type": "Tellurique",
+    "diameter_km": 12756,
+    "mass_10_24kg": 5.97,
+    "distance_sun_mkm": 149.6,
+    "orbital_period_days": 365.2,
+    "surface_temp_c": 15,
+    "moons": 1,
+    "has_rings": false
+  },
+  {
+    "name": "Mars",
+    "type": "Tellurique",
+    "diameter_km": 6792,
+    "mass_10_24kg": 0.642,
+    "distance_sun_mkm": 227.9,
+    "orbital_period_days": 687,
+    "surface_temp_c": -65,
+    "moons": 2,
+    "has_rings": false
+  },
+  {
+    "name": "Cérès",
+    "type": "Naine",
+    "diameter_km": 940,
+    "mass_10_24kg": 0.0009,
+    "distance_sun_mkm": 414.0,
+    "orbital_period_days": 1682,
+    "surface_temp_c": -106,
+    "moons": 0,
+    "has_rings": false
+  },
+  {
+    "name": "Jupiter",
+    "type": "Géante gazeuse",
+    "diameter_km": 142984,
+    "mass_10_24kg": 1898,
+    "distance_sun_mkm": 778.6,
+    "orbital_period_days": 4331,
+    "surface_temp_c": -110,
+    "moons": 95,
+    "has_rings": true
+  },
+  {
+    "name": "Saturne",
+    "type": "Géante gazeuse",
+    "diameter_km": 120536,
+    "mass_10_24kg": 568,
+    "distance_sun_mkm": 1433.5,
+    "orbital_period_days": 10747,
+    "surface_temp_c": -140,
+    "moons": 146,
+    "has_rings": true
+  },
+  {
+    "name": "Uranus",
+    "type": "Géante de glace",
+    "diameter_km": 51118,
+    "mass_10_24kg": 86.8,
+    "distance_sun_mkm": 2872.5,
+    "orbital_period_days": 30589,
+    "surface_temp_c": -195,
+    "moons": 28,
+    "has_rings": true
+  },
+  {
+    "name": "Neptune",
+    "type": "Géante de glace",
+    "diameter_km": 49528,
+    "mass_10_24kg": 102,
+    "distance_sun_mkm": 4495.1,
+    "orbital_period_days": 59800,
+    "surface_temp_c": -200,
+    "moons": 16,
+    "has_rings": true
+  },
+  {
+    "name": "Pluton",
+    "type": "Naine",
+    "diameter_km": 2376,
+    "mass_10_24kg": 0.013,
+    "distance_sun_mkm": 5906.4,
+    "orbital_period_days": 90560,
+    "surface_temp_c": -225,
+    "moons": 5,
+    "has_rings": false
+  }
+]

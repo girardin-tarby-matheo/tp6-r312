@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Penguin avec filtre - Observable Plot">
+    <main class="ml-40 mt-10">
+        <h1>Penguin avec filtre</h1>
+        <label for="species">Espèce</label>
+        <select name="species" id="species">
+            <option value="">All species</option>
+            <option value="Adelie">Adelie</option>
+            <option value="Chinstrap">Chinstrap</option>
+            <option value="Gentoo">Gentoo</option>
+        </select>
+        <div id="plot" class="plot-shell" aria-live="polite"></div>
+        <p class="mt-8"><a href="/">← Retour au sommaire</a></p>
+    </main>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import penguins from "../assets/penguins.json";
+
+    const selectSpecies = document.querySelector<HTMLSelectElement>("#species");
+
+    function renderPlot() {
+        const species = selectSpecies?.value ?? "";
+        const plotContainer = document.querySelector<HTMLDivElement>("#plot");
+        if (!plotContainer) return;
+        const filteredPenguins = species
+            ? penguins.filter((penguin) => penguin.species === species)
+            : penguins;
+        plotContainer.replaceChildren();
+        const plot = Plot.plot({
+            title: species
+                ? `Morphologie du bec : ${species}`
+                : "Morphologie du bec des manchots",
+            grid: true,
+            color: { legend: true },
+            marks: [
+                Plot.dot(filteredPenguins, {
+                    x: "culmen_length_mm",
+                    y: "culmen_depth_mm",
+                    stroke: "species",
+                }),
+            ],
+        });
+        plotContainer.append(plot);
+    }
+
+    selectSpecies?.addEventListener("change", renderPlot);
+    renderPlot();
+</script>

@@ -1,0 +1,89 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GraphicSpecies from "../../components/GraphicSpecies.astro";
+import rawPenguins from "../../data/penguins.json";
+
+const speciesList = [...new Set(rawPenguins.map((penguin) => penguin.species))];
+---
+
+<Layout title="Toutes les espèces — Manchots de Palmer">
+    <main class="ml-40 mt-10">
+        <h1 class="mb-4 text-3xl font-bold">Espèces de manchots</h1>
+
+        <nav
+            aria-label="Navigation par espèce"
+            class="mb-4 flex items-center gap-3"
+        >
+            <label for="species" class="font-bold"> Choisir une espèce </label>
+
+            <select
+                id="species"
+                class="min-w-48 rounded border border-gray-300 px-2 py-1"
+            >
+                {
+                    speciesList.map((species) => (
+                        <option value={species.toLowerCase()}>{species}</option>
+                    ))
+                }
+            </select>
+        </nav>
+
+        <div
+            class="flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth"
+        >
+            {
+                speciesList.map((species) => (
+                    <section
+                        class="item w-full flex-shrink-0 snap-start"
+                        id={species.toLowerCase()}
+                    >
+                        <GraphicSpecies species={species} />
+                    </section>
+                ))
+            }
+        </div>
+
+        <p class="mt-8">/ ← Retour à l'accueil</p>
+    </main>
+</Layout>
+
+<script>
+    const speciesSelect = document.querySelector(
+        "#species",
+    ) as HTMLSelectElement | null;
+
+    const items = document.querySelectorAll(".item");
+
+    speciesSelect?.addEventListener("change", (event) => {
+        const value = (event.target as HTMLSelectElement).value;
+        location.hash = value;
+    });
+
+    const initialHash = location.hash.slice(1);
+
+    if (
+        initialHash &&
+        speciesSelect?.querySelector(`option[value="${initialHash}"]`)
+    ) {
+        speciesSelect.value = initialHash;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                const id = entry.target.getAttribute("id");
+
+                if (entry.isIntersecting) {
+                    if (id && speciesSelect) {
+                        speciesSelect.value = id;
+                    }
+                }
+            });
+        },
+        { threshold: 0.5 },
+    );
+
+    items.forEach((item) => {
+        observer.observe(item);
+    });
+</script>

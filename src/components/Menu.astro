@@ -1,0 +1,126 @@
+---
+const currentPath = Astro.url.pathname;
+
+const tabs = [
+    { id: "home", label: "Accueil", href: "/" },
+    {
+        id: "penguin-filtre",
+        label: "Penguin avec filtre",
+        href: "/penguin-filtre/",
+    },
+    {
+        id: "penguin-filtres",
+        label: "Penguin avec plusieurs filtres",
+        href: "/penguin-filtres/",
+    },
+    { id: "graphique1", label: "Graphique 1", href: "/graphique1/" },
+    { id: "graphique2", label: "Graphique 2", href: "/graphique2/" },
+    { id: "graphique3", label: "Graphique 3", href: "/graphique3/" },
+    { id: "graphique4", label: "Graphique 4", href: "/graphique4/" },
+    { id: "species", label: "Trie par Espèces", href: "/species/" },
+    {
+        id: "species-tabs",
+        label: "Espèces par onglets",
+        href: "/species-tabs/",
+    },
+    { id: "adelie", label: "Adélie", href: "/species/Adelie/" },
+    { id: "gentoo", label: "Gentoo", href: "/species/Gentoo/" },
+    { id: "chinstrap", label: "Chinstrap", href: "/species/Chinstrap/" },
+    { id: "pokemon", label: "Pokémon", href: "/pokemon/" },
+    {
+        id: "pokemon-filtre",
+        label: "Pokémon avec filtre",
+        href: "/pokemon-filtre/",
+    },
+    { id: "planets", label: "Planètes", href: "/planets/" },
+    {
+        id: "planets-filtre",
+        label: "Planètes avec filtre",
+        href: "/planets-filtre/",
+    },
+    { id: "cars", label: "Voitures", href: "/cars/" },
+];
+---
+
+<nav class="menu" aria-label="Navigation principale">
+    <div class="menu-inner">
+        <label for="page-navigation">Aller à une page</label>
+        <select id="page-navigation" aria-label="Choisir une page">
+            {
+                tabs.map((tab) => (
+                    <option
+                        value={tab.href}
+                        selected={tab.href === currentPath}
+                    >
+                        {tab.label}
+                    </option>
+                ))
+            }
+        </select>
+    </div>
+</nav>
+
+<script>
+    document
+        .querySelector("#page-navigation")
+        ?.addEventListener("change", (event) => {
+            const value = (event.target as HTMLSelectElement).value;
+            window.location.pathname = value;
+        });
+</script>
+
+<style>
+    .menu {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--color-border);
+        background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+        backdrop-filter: blur(0.75rem);
+    }
+
+    .menu-inner {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        justify-content: flex-end;
+        width: min(100% - 2rem, 75rem);
+        min-height: 4.5rem;
+        margin-inline: auto;
+    }
+
+    .menu label {
+        color: var(--color-muted);
+        font-size: 0.875rem;
+        font-weight: bold;
+    }
+
+    .menu select {
+        min-width: 13rem;
+        border: 1px solid var(--color-border-strong);
+        border-radius: 0.5rem;
+        background: var(--color-surface);
+        padding: 0.6rem 2rem 0.6rem 0.75rem;
+        color: var(--color-ink);
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .menu select:focus-visible {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 42rem) {
+        .menu-inner {
+            flex-wrap: wrap;
+            gap: 0.5rem 0.75rem;
+            padding-block: 0.75rem;
+        }
+
+        .menu select {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+</style>

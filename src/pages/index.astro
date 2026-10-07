@@ -1,21 +1,147 @@
 ---
-import PlotFigure from "../components/PlotFigure.astro";
-import Layout from "../layouts/Layout.astro";
 import * as Plot from "@observablehq/plot";
-import penguins from "../assets/penguins.json";
+import Layout from "../layouts/Layout.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import rawPenguins from "../data/penguins.json";
+
+const penguins = rawPenguins.filter(
+    (d) =>
+        d.culmen_length_mm &&
+        d.culmen_depth_mm &&
+        d.body_mass_g &&
+        d.flipper_length_mm,
+);
+const previews = [
+    {
+        href: "/graphique1/",
+        options: {
+            title: "Morphologie du bec des manchots de Palmer",
+            grid: true,
+            color: { legend: true },
+            marks: [
+                Plot.dot(penguins, {
+                    x: "culmen_length_mm",
+                    y: "culmen_depth_mm",
+                    stroke: "species",
+                }),
+            ],
+        },
+    },
+    {
+        href: "/graphique2/",
+        options: {
+            title: "Distribution de la masse corporelle",
+            grid: true,
+            color: { legend: true },
+            marks: [
+                Plot.rectY(
+                    penguins,
+                    Plot.binX({ y: "count" }, {
+                        x: "body_mass_g",
+                        fill: "species",
+                    } as any),
+                ),
+                Plot.ruleY([0]),
+            ],
+        },
+    },
+    {
+        href: "/graphique3/",
+        options: {
+            title: "Effectif recensé par espèce et par sexe",
+            height: 300,
+            marginLeft: 100,
+            x: { grid: true },
+            color: { legend: true },
+            marks: [
+                Plot.barX(
+                    penguins.filter((d) => d.sex),
+                    Plot.groupY({ x: "count" }, { y: "species", fill: "sex" }),
+                ),
+                Plot.ruleX([0]),
+            ],
+        },
+    },
+    {
+        href: "/graphique4/",
+        options: {
+            title: "Longueur des nageoires par espèce",
+            height: 300,
+            marginLeft: 100,
+            grid: true,
+            marks: [
+                Plot.boxX(penguins, {
+                    x: "flipper_length_mm",
+                    y: "species",
+                    fill: "species",
+                }),
+            ],
+        },
+    },
+];
 ---
 
-<Layout>
-  <h1 class="text-2xl">Test Astro et Plot (Observablehq)</h1>
-  <PlotFigure
-    options={{
-      marks: [
-        Plot.dot(penguins, {
-          x: "culmen_length_mm",
-          y: "culmen_depth_mm",
-          stroke: "species",
-        }),
-      ],
-    }}
-  />
+<Layout title="Manchots de Palmer">
+    <main class="ml-40 mt-10">
+        <h1>Manchots de Palmer</h1>
+        <nav aria-label="Sommaire des essais" class="trial-navigation">
+            <a href="/penguin-filtre/">Essais Penguins</a>
+            <a href="/penguin-filtres/"
+                >Essais Penguins avec plusieurs filtres</a
+            >
+            <a href="/planets/">Dataset Planètes</a>
+            <a href="/planets-filtre/">Dataset Planètes avec filtre</a>
+            <a href="/pokemon/">Dataset Pokémon</a>
+            <a href="/pokemon-filtre/">Dataset Pokémon avec filtre</a>
+        </nav>
+        <div class="navigation">
+            <button
+                class="previous text-4xl"
+                type="button"
+                aria-label="Graphique précédent">←</button
+            >
+            <button
+                class="next text-4xl"
+                type="button"
+                aria-label="Graphique suivant">→</button
+            >
+        </div>
+        <section aria-label="Aperçu des graphiques">
+            {
+                previews.map((preview, index) => (
+                    <article class:list={["slide", { active: index === 0 }]}>
+                        <h2>{preview.options.title}</h2>
+                        <PlotFigure
+                            options={{
+                                ...preview.options,
+                                width: 760,
+                                height: 300,
+                            }}
+                        />
+                        <a href={preview.href} class="button text-blue-700">
+                            Voir le graphique
+                        </a>
+                    </article>
+                ))
+            }
+        </section>
+    </main>
 </Layout>
+
+<script>
+    const slides = [...document.querySelectorAll<HTMLElement>(".slide")];
+    let current = 0;
+    function show(index: number) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => {
+            slide.hidden = i !== current;
+        });
+    }
+    document
+        .querySelector(".next")
+        ?.addEventListener("click", () => show(current + 1));
+    document
+        .querySelector(".previous")
+        ?.addEventListener("click", () => show(current - 1));
+    show(0);
+</script>

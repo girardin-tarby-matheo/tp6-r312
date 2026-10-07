@@ -1,0 +1,35 @@
+---
+import * as Plot from "@observablehq/plot";
+import Layout from "../layouts/Layout.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import rawPenguins from "../data/penguins.json";
+
+const penguins = rawPenguins.filter((d) => d.body_mass_g);
+const options = {
+    title: "Distribution de la masse corporelle",
+    subtitle: "Poids des manchots groupé par tranches et espèces",
+    grid: true,
+    color: { legend: true },
+    marks: [
+        Plot.rectY(
+            penguins,
+            Plot.binX({ y: "count" }, {
+                x: "body_mass_g",
+                fill: "species",
+            } as any),
+        ),
+        Plot.ruleY([0]),
+    ],
+};
+---
+
+<Layout title="Graphique 2 - Manchots de Palmer">
+    <main class="ml-40 mt-10">
+        <PlotFigure options={options} />
+        <p class="mt-8">
+            <a href="/" class="text-blue-600 hover:underline"
+                >← Retour à l'accueil</a
+            >
+        </p>
+    </main>
+</Layout>

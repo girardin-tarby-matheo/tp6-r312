@@ -1,0 +1,112 @@
+---
+import * as Plot from "@observablehq/plot";
+import Layout from "../layouts/Layout.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import planetsData from "../data/planets.json";
+
+const plotDistanceDiameter = {
+    title: "Distance au Soleil et Diamètre des planètes",
+    subtitle: "Échelle logarithmique sur la distance (en millions de km)",
+    grid: true,
+    inset: 15,
+    x: { type: "log", label: "Distance au Soleil (millions km) →" },
+    y: { label: "Diamètre (km) ↑" },
+    color: { legend: true },
+    marks: [
+        Plot.dot(planetsData, {
+            x: "distance_sun_mkm",
+            y: "diameter_km",
+            stroke: "type",
+            r: 6,
+        }),
+        Plot.text(planetsData, {
+            x: "distance_sun_mkm",
+            y: "diameter_km",
+            text: "name",
+            dy: -12,
+            fontSize: 11,
+            fill: "#374151",
+        }),
+    ],
+};
+
+const plotMoons = {
+    title: "Nombre de lunes par planète",
+    marginLeft: 80,
+    x: { grid: true, label: "Nombre de lunes →" },
+    marks: [
+        Plot.barX(planetsData, {
+            x: "moons",
+            y: "name",
+            fill: "type",
+            sort: { y: "-x" },
+        }),
+        Plot.text(planetsData, {
+            x: "moons",
+            y: "name",
+            text: (d) => (d.moons > 0 ? `${d.moons}` : ""),
+            dx: 12,
+            fontSize: 10,
+        }),
+        Plot.ruleX([0]),
+    ],
+};
+
+const plotTemperature = {
+    title: "Température moyenne de surface (°C)",
+    marginLeft: 80,
+    x: { grid: true, label: "Température (°C) →" },
+    marks: [
+        Plot.barX(planetsData, {
+            x: "surface_temp_c",
+            y: "name",
+            fill: (d) => (d.surface_temp_c >= 0 ? "#ef4444" : "#3b82f6"),
+            sort: { y: "data", value: "distance_sun_mkm" },
+        }),
+        Plot.ruleX([0]),
+    ],
+};
+---
+
+<Layout title="Données Planétaires — Système Solaire">
+    <main class="ml-40 mt-10 max-w-5xl pr-8 pb-16">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Base de données des Planètes
+            </h1>
+            <p class="text-gray-600">
+                Visualisation des caractéristiques physiques et orbitales des
+                principaux corps célestes du Système Solaire.
+            </p>
+        </header>
+
+        <section class="space-y-8 mb-12">
+            <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                    1. Distance au Soleil et Diamètre
+                </h2>
+                <PlotFigure options={plotDistanceDiameter} />
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        2. Satellites naturels (Lunes)
+                    </h2>
+                    <PlotFigure options={plotMoons} />
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        3. Température de surface
+                    </h2>
+                    <PlotFigure options={plotTemperature} />
+                </div>
+            </div>
+        </section>
+
+        <p class="mt-8">
+            <a href="/" class="text-blue-600 hover:underline">← Retour à l'accueil</a>
+        </p>
+    </main>
+</Layout>
+
